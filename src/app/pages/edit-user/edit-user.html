@@ -130,18 +130,7 @@
                 <span>*</span>
               </label>
 
-              <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                <mat-select id="branch" formControlName="branch">
-                  @for (
-                  branch of branches;
-                  track branch.id
-                  ) {
-                  <mat-option [value]="branch.name">
-                    {{ branch.name }}
-                  </mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
+      
 
               @if (
               branchControl.touched &&
