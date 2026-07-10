@@ -1,0 +1,253 @@
+<section class="user-management">
+  <header class="page-header">
+    <div class="page-title">
+      <h1>Users</h1>
+      <p>Manage user accounts and access</p>
+    </div>
+
+    <button
+      mat-flat-button
+      type="button"
+      class="add-user-button"
+      (click)="addUser()"
+    >
+      <mat-icon>add</mat-icon>
+      <span>Add User</span>
+    </button>
+    
+  </header>
+
+  <div class="toolbar">
+    <mat-form-field
+      appearance="outline"
+      class="search-field"
+      subscriptSizing="dynamic"
+    >
+      <mat-icon matPrefix>search</mat-icon>
+
+      <input
+        matInput
+        type="search"
+        placeholder="Search by name or email..."
+        aria-label="Search users"
+        [(ngModel)]="searchText"
+      />
+
+      @if (searchText) {
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          aria-label="Clear search"
+          (click)="searchText = ''"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+
+    <div class="filters">
+      <mat-form-field
+        appearance="outline"
+        class="filter-field"
+        subscriptSizing="dynamic"
+      >
+        <mat-select
+          aria-label="Filter by status"
+          [(ngModel)]="selectedStatus"
+          panelClass="soft-dropdown-panel"
+        >
+          <mat-option [value]="''">All Status</mat-option>
+          <mat-option value="active">Active</mat-option>
+          <mat-option value="inactive">Inactive</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field
+        appearance="outline"
+        class="filter-field"
+        subscriptSizing="dynamic"
+      >
+        <mat-select
+          aria-label="Filter by role"
+          [(ngModel)]="selectedRole"
+          panelClass="soft-dropdown-panel"
+        >
+          <mat-option [value]="''">All Roles</mat-option>
+
+          @for (role of roles; track role.id) {
+            <mat-option [value]="role.id">
+              {{ role.label }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="table-card"> 
+    @if (isLoading()) {
+      <div class="state-container">
+        <mat-spinner diameter="42"></mat-spinner>
+        <p>Loading users...</p>
+      </div>
+    } @else if (errorMessage()) {
+      <div class="state-container error-state">
+        <mat-icon class="state-icon">
+          error_outline
+        </mat-icon>
+
+        <strong>
+          Unable to load users
+        </strong>
+
+        <p>
+          {{ errorMessage() }}
+        </p>
+
+        <button
+          mat-flat-button
+          type="button"
+          class="retry-button"
+          (click)="loadUsers()"
+        >
+          <mat-icon>refresh</mat-icon>
+          Try Again
+        </button>
+      </div>
+    } @else if (filteredUsers.length === 0) {
+      <div class="state-container">
+        <mat-icon class="state-icon">
+          person_search
+        </mat-icon>
+
+        <strong>No users found</strong>
+
+        <p>
+          Try changing your search or filters.
+        </p>
+      </div>
+    } @else {
+      <div class="table-scroll">
+        <table mat-table [dataSource]="filteredUsers" class="users-table">
+          <!-- User -->
+          <ng-container matColumnDef="user">
+            <th mat-header-cell *matHeaderCellDef>
+              User
+            </th>
+
+            <td mat-cell *matCellDef="let user">
+              <div class="user-cell">
+                <div class="avatar">
+                  {{ getUserInitials(user.fullName) }}
+                </div>
+
+                <div class="user-details">
+                  <strong>
+                    {{ user.fullName }}
+                  </strong>
+
+                  <span>
+                    {{ user.email }}
+                  </span>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Role -->
+          <ng-container matColumnDef="role">
+            <th mat-header-cell *matHeaderCellDef>
+              Role
+            </th>
+
+            <td mat-cell *matCellDef="let user">
+              <span
+                class="role-badge"
+                [ngClass]="getRoleClass(user.roleId)"
+              >
+                {{ user.role }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Status -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>
+              Status
+            </th>
+
+            <td mat-cell *matCellDef="let user">
+              <span
+                class="status-badge"
+                [ngClass]="getStatusClass(user.status)"
+              >
+                {{ user.status.toLowerCase() }}
+              </span>
+            </td>
+          </ng-container>
+
+   
+
+          <!-- Actions -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions-heading">
+              Actions
+            </th>
+
+            <td mat-cell *matCellDef="let user">
+              <div class="action-buttons">
+                <button
+                  mat-icon-button
+                  type="button"
+                  class="action-button"
+                  matTooltip="View user"
+                  [attr.aria-label]="'View ' + user.fullName"
+                  (click)="viewUser(user)"
+                >
+                  <mat-icon>
+                    visibility
+                  </mat-icon>
+                </button>
+
+                <button
+                  mat-icon-button
+                  type="button"
+                  class="action-button"
+                  matTooltip="Edit user"
+                  [attr.aria-label]="'Edit ' + user.fullName"
+                  (click)="editUser(user)"
+                >
+                  <mat-icon>
+                    edit_square
+                  </mat-icon>
+                </button>
+
+                <button
+                  mat-icon-button
+                  type="button"
+                  class="action-button delete-button"
+                  matTooltip="Delete user"
+                  [disabled]="deletingUserId() === user.id"
+                  [attr.aria-label]="'Delete ' + user.fullName"
+                  (click)="deleteUser(user)"
+                >
+                  <mat-icon>
+                    delete_outline
+                  </mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns"
+          ></tr>
+        </table>
+      </div>
+    }
+  </div>
+</section>

@@ -1,0 +1,102 @@
+<aside
+  class="sidebar"
+  [class.open]="open"
+  [class.closed]="!open"
+  [class.mobile]="mobile"
+  [attr.aria-hidden]="
+    mobile && !open
+  "
+>
+  <div class="brand">
+    <div
+      class="brand-icon"
+      aria-hidden="true"
+    >
+      SR
+    </div>
+
+    <div class="brand-text">
+      <h2>Soft Resto</h2>
+
+      <p>User Management</p>
+    </div>
+
+    @if (mobile) {
+      <button
+        type="button"
+        class="mobile-close-button"
+        aria-label="Close sidebar"
+        (click)="requestClose()"
+      >
+        <span
+          class="material-symbols-outlined"
+        >
+          close
+        </span>
+      </button>
+    }
+  </div>
+
+  <nav
+    class="nav-menu"
+    aria-label="Main navigation"
+  >
+    @for (
+      item of navigationItems;
+      track item.route
+    ) {
+      <a
+        class="nav-item"
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{
+          exact: item.exact ?? false
+        }"
+        [attr.title]="
+          !open && !mobile
+            ? item.label
+            : null
+        "
+        (click)="
+          onNavigationClick()
+        "
+      >
+        <span
+          class="
+            material-symbols-outlined
+            nav-icon
+          "
+          aria-hidden="true"
+        >
+          {{ item.icon }}
+        </span>
+
+        <span class="nav-label">
+          {{ item.label }}
+        </span>
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-avatar">
+      AD
+    </div>
+
+    <div class="user-details">
+      <h4>Admin User</h4>
+
+      <p>Super Admin</p>
+    </div>
+
+    <span
+      class="
+        material-symbols-outlined
+        footer-arrow
+      "
+      aria-hidden="true"
+    >
+      keyboard_arrow_down
+    </span>
+  </div>
+</aside>

@@ -1,0 +1,61 @@
+<header class="top-bar">
+  <button
+    type="button"
+    class="menu-button"
+    [attr.aria-label]="
+      sidebarOpen
+        ? 'Close sidebar'
+        : 'Open sidebar'
+    "
+    [attr.aria-expanded]="
+      sidebarOpen
+    "
+    (click)="onToggleSidebar()"
+  >
+    <span
+      class="material-symbols-outlined"
+    >
+      {{
+        sidebarOpen
+          ? 'menu_open'
+          : 'menu'
+      }}
+    </span>
+  </button>
+
+  <div class="search-container">
+    <span
+      class="
+        material-symbols-outlined
+        search-icon
+      "
+      aria-hidden="true"
+    >
+      search
+    </span>
+
+    <input
+      type="search"
+      placeholder="Search..."
+      class="search-input"
+      aria-label="Search"
+    />
+  </div>
+
+  <div class="user-info">
+        <div class="details">
+      <span class="username">
+        ADMIN USER
+      </span>
+
+      <span class="role">
+        Admin
+      </span>
+    </div>
+    <div class="avatar">
+      AD
+    </div>
+
+
+  </div>
+</header>
