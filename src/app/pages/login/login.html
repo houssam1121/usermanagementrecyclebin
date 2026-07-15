@@ -1,0 +1,231 @@
+<main class="login-page">
+    <section class="login-brand">
+        <div class="background-grid"></div>
+
+        <div class="glow glow-one"></div>
+        <div class="glow glow-two"></div>
+
+        <div class="brand-content">
+            <div class="brand-icon">
+                <mat-icon>
+                    manage_accounts
+                </mat-icon>
+            </div>
+
+            <span class="brand-name">
+                SOFT RESTO
+            </span>
+
+            <h1>
+                User Management
+            </h1>
+
+            <p class="brand-description">
+                Securely manage users, roles,
+                permissions and system access from
+                one centralized workspace.
+            </p>
+
+            <!-- <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">
+                        <mat-icon>
+                            verified_user
+                        </mat-icon>
+                    </div>
+
+                    <div class="feature-text">
+                        <strong>
+                            Secure authentication
+                        </strong>
+
+                        <span>
+                            Protected access using JWT
+                            authentication.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">
+                        <mat-icon>
+                            groups
+                        </mat-icon>
+                    </div>
+
+                    <div class="feature-text">
+                        <strong>
+                            User administration
+                        </strong>
+
+                        <span>
+                            Create, update and manage
+                            system users.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">
+                        <mat-icon>
+                            admin_panel_settings
+                        </mat-icon>
+                    </div>
+
+                    <div class="feature-text">
+                        <strong>
+                            Roles and permissions
+                        </strong>
+
+                        <span>
+                            Control access based on user
+                            responsibilities.
+                        </span>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </section>
+
+    <section class="login-form-section">
+        <div class="login-container">
+            <div class="mobile-brand-icon">
+                <mat-icon>
+                    manage_accounts
+                </mat-icon>
+            </div>
+
+            <header class="login-header">
+                <span class="welcome-text">
+                    Welcome back
+                </span>
+
+                <h2>
+                    Sign in to your account
+                </h2>
+
+                <p>
+                    Enter your username and password
+                    to access User Management.
+                </p>
+            </header>
+
+            <form class="login-form" [formGroup]="loginForm" (ngSubmit)="login()">
+                @if (errorMessage) {
+                <div class="error-alert" role="alert">
+                    <mat-icon>
+                        error_outline
+                    </mat-icon>
+
+                    <span>
+                        {{ errorMessage }}
+                    </span>
+                </div>
+                }
+
+                <div class="form-field-group">
+                    <label for="userName">
+                        Username
+                    </label>
+
+                    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                        <mat-icon matPrefix>
+                            person_outline
+                        </mat-icon>
+
+                        <input matInput id="userName" type="text" formControlName="userName"
+                            placeholder="Enter your username" autocomplete="username" />
+
+                        @if (
+                        loginForm.controls.userName
+                        .touched &&
+                        loginForm.controls.userName
+                        .hasError('required')
+                        ) {
+                        <mat-error>
+                            Username is required.
+                        </mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+
+                <div class="form-field-group">
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                        <mat-icon matPrefix>
+                            lock_outline
+                        </mat-icon>
+
+                        <input matInput id="password" [type]="
+                hidePassword
+                  ? 'password'
+                  : 'text'
+              " formControlName="password" placeholder="Enter your password" autocomplete="current-password" />
+
+                        <button mat-icon-button matSuffix type="button" class="password-button" [attr.aria-label]="
+                hidePassword
+                  ? 'Show password'
+                  : 'Hide password'
+              " (click)="
+                togglePasswordVisibility()
+              ">
+                            <mat-icon>
+                                {{
+                                hidePassword
+                                ? 'visibility_off'
+                                : 'visibility'
+                                }}
+                            </mat-icon>
+                        </button>
+
+                        @if (
+                        loginForm.controls.password
+                        .touched &&
+                        loginForm.controls.password
+                        .hasError('required')
+                        ) {
+                        <mat-error>
+                            Password is required.
+                        </mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+
+                <div class="form-options">
+                    <mat-checkbox formControlName="rememberMe">
+                        Remember me
+                    </mat-checkbox>
+                </div>
+
+                <button mat-flat-button type="submit" class="submit-button" [disabled]="isLoading">
+                    @if (isLoading) {
+                    <mat-spinner diameter="21"></mat-spinner>
+
+                    <span>
+                        Signing in...
+                    </span>
+                    } @if (!isLoading) {
+                    <mat-icon>login</mat-icon>
+                    }
+
+                    @if (!isLoading) {
+                    <span>Sign In</span>
+                    }
+                </button>
+            </form>
+
+            <footer class="login-footer">
+                <mat-icon>
+                    lock
+                </mat-icon>
+
+                <span>
+                    Protected User Management System
+                </span>
+            </footer>
+        </div>
+    </section>
+</main>

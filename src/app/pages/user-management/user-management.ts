@@ -1,12 +1,20 @@
+
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
-// Angular Material
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import {
+  MatDialog,
+  MatDialogModule,
+} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -16,6 +24,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { RolesEnum } from '../../core/enums/app-enums';
+
 import { ApiUser } from '../../models/api-user.model';
 import { UsersService } from '../../services/users.service';
 
@@ -23,8 +32,11 @@ import {
   ConfirmDeleteDialog,
   ConfirmDeleteDialogData,
 } from '../../shared/components/confirm-delete-dialog/confirm-delete-dialog';
+import { ApiError } from '../../models/api-error.model';
 
-type UserStatus = 'Active' | 'Inactive';
+type UserStatus =
+  | 'Active'
+  | 'Inactive';
 
 interface RoleOption {
   id: RolesEnum;
@@ -68,9 +80,14 @@ interface User {
   styleUrl: './user-management.scss',
 })
 export class UserManagement implements OnInit {
-  private readonly usersService = inject(UsersService);
-  private readonly router = inject(Router);
-  private readonly dialog = inject(MatDialog);
+  private readonly usersService =
+    inject(UsersService);
+
+  private readonly router =
+    inject(Router);
+
+  private readonly dialog =
+    inject(MatDialog);
 
   readonly displayedColumns: string[] = [
     'user',
@@ -79,129 +96,256 @@ export class UserManagement implements OnInit {
     'actions',
   ];
 
-  readonly roles: RoleOption[] = this.createRoleOptions();
+  readonly roles: RoleOption[] =
+    this.createRoleOptions();
 
   searchText = '';
-  selectedStatus = '';
-  selectedRole: RolesEnum | '' = '';
 
-  readonly users = signal<User[]>([]);
-  readonly isLoading = signal(false);
-  readonly errorMessage = signal('');
-  readonly deletingUserId = signal<number | null>(null);
-  readonly updatingUserId = signal<number | null>(null);
+  selectedStatus = '';
+
+  selectedRole:
+    RolesEnum | '' = '';
+
+  readonly users =
+    signal<User[]>([]);
+
+  readonly isLoading =
+    signal(false);
+
+  readonly errorMessage =
+    signal('');
+
+  readonly deletingUserId =
+    signal<number | null>(null);
+
+  readonly updatingUserId =
+    signal<number | null>(null);
 
   ngOnInit(): void {
     this.loadUsers();
   }
 
   loadUsers(): void {
+    if (this.isLoading()) {
+      return;
+    }
+
     this.isLoading.set(true);
     this.errorMessage.set('');
 
-    this.usersService.getUsers().subscribe({
-      next: (apiUsers: ApiUser[]) => {
-        const mappedUsers = apiUsers.map((apiUser) => this.mapApiUser(apiUser));
+    this.usersService
+      .getUsers()
+      .subscribe({
+        next: (
+          apiUsers: ApiUser[],
+        ) => {
+          const mappedUsers =
+            apiUsers.map(
+              (apiUser) =>
+                this.mapApiUser(
+                  apiUser,
+                ),
+            );
 
-        this.users.set(mappedUsers);
-        this.isLoading.set(false);
-      },
+          this.users.set(
+            mappedUsers,
+          );
 
-      error: (error) => {
-        console.error('Failed to load users:', error);
+          this.isLoading.set(
+            false,
+          );
+        },
 
-        this.isLoading.set(false);
-        this.setErrorMessage(error);
-      },
-    });
+        error: (
+          error: ApiError,
+        ) => {
+          console.error(
+            'Failed to load users:',
+            error,
+          );
+
+          this.isLoading.set(
+            false,
+          );
+
+          this.errorMessage.set(
+            error.message,
+          );
+        },
+      });
   }
 
-  private mapApiUser(apiUser: ApiUser): User {
-    const roleId = this.normalizeRoleId(apiUser.RoleId);
+  private mapApiUser(
+    apiUser: ApiUser,
+  ): User { 
+    const roleId =
+      this.normalizeRoleId(
+        apiUser.RoleId,
+      );
 
     return {
-      id: apiUser.Id,
+      id:
+        apiUser.Id,
 
-      userName: apiUser.UserName?.trim() || '',
+      userName:
+        apiUser.UserName?.trim() ||
+        '',
 
       fullName:
         apiUser.FullName?.trim() ||
         apiUser.UserName?.trim() ||
         'Unknown User',
 
-      email: apiUser.Email?.trim() || 'No email',
+      email:
+        apiUser.Email?.trim() ||
+        'No email',
 
-      phone: apiUser.Phone?.trim() || '',
+      phone:
+        apiUser.Phone?.trim() ||
+        '',
 
-      mobile: apiUser.Mobile?.trim() || '',
+      mobile:
+        apiUser.Mobile?.trim() ||
+        '',
 
-      address: apiUser.Address?.trim() || '',
+      address:
+        apiUser.Address?.trim() ||
+        '',
 
       roleId,
 
-      role: this.getRoleLabel(roleId),
+      role:
+        this.getRoleLabel(
+          roleId,
+        ),
 
-      status: apiUser.Active === 1 ? 'Active' : 'Inactive',
+      status:
+        apiUser.Active === 1
+          ? 'Active'
+          : 'Inactive',
 
-      branch: '—',
+      branch:
+        '—',
 
-      lastLogin: '—',
+      lastLogin:
+        '—',
 
-      createdAt: apiUser.CreatedAt || '',
+      createdAt:
+        apiUser.CreatedAt ||
+        '',
     };
   }
 
-  private createRoleOptions(): RoleOption[] {
-    return Object.values(RolesEnum)
-      .filter((value): value is RolesEnum => typeof value === 'number')
+  private createRoleOptions():
+    RoleOption[] {
+    return Object.values(
+      RolesEnum,
+    )
+      .filter(
+        (
+          value,
+        ): value is RolesEnum =>
+          typeof value ===
+          'number',
+      )
       .map((id) => ({
         id,
-        label: this.getRoleLabel(id),
+        label:
+          this.getRoleLabel(
+            id,
+          ),
       }));
   }
 
-  private normalizeRoleId(roleId: number | null | undefined): RolesEnum {
-    const roleValue = Number(roleId);
+  private normalizeRoleId(
+    roleId:
+      | number
+      | null
+      | undefined,
+  ): RolesEnum {
+    const roleValue =
+      Number(roleId);
 
-    const roleExists = this.roles.some((role) => role.id === roleValue);
+    const roleExists =
+      this.roles.some(
+        (role) =>
+          role.id ===
+          roleValue,
+      );
 
-    return roleExists ? roleValue : RolesEnum.Custom;
+    return roleExists
+      ? roleValue
+      : RolesEnum.Custom;
   }
 
-  getRoleLabel(roleId: RolesEnum): string {
-    const enumName = RolesEnum[roleId];
+  getRoleLabel(
+    roleId: RolesEnum,
+  ): string {
+    const enumName =
+      RolesEnum[roleId];
 
     if (!enumName) {
       return 'Custom';
     }
 
-    return enumName.replace(/([a-z])([A-Z])/g, '$1 $2');
+    return enumName.replace(
+      /([a-z])([A-Z])/g,
+      '$1 $2',
+    );
   }
 
-  get filteredUsers(): User[] {
-    const search = this.searchText.trim().toLowerCase();
+  get filteredUsers():
+    User[] {
+    const search =
+      this.searchText
+        .trim()
+        .toLowerCase();
 
-    return this.users().filter((user) => {
-      const matchesSearch =
-        !search ||
-        user.fullName.toLowerCase().includes(search) ||
-        user.userName.toLowerCase().includes(search) ||
-        user.email.toLowerCase().includes(search) ||
-        user.mobile.toLowerCase().includes(search) ||
-        user.phone.toLowerCase().includes(search);
+    return this.users().filter(
+      (user) => {
+        const matchesSearch =
+          !search ||
+          user.fullName
+            .toLowerCase()
+            .includes(search) ||
+          user.userName
+            .toLowerCase()
+            .includes(search) ||
+          user.email
+            .toLowerCase()
+            .includes(search) ||
+          user.mobile
+            .toLowerCase()
+            .includes(search) ||
+          user.phone
+            .toLowerCase()
+            .includes(search);
 
-      const matchesStatus =
-        !this.selectedStatus ||
-        user.status.toLowerCase() === this.selectedStatus.toLowerCase();
+        const matchesStatus =
+          !this.selectedStatus ||
+          user.status
+            .toLowerCase() ===
+            this.selectedStatus
+              .toLowerCase();
 
-      const matchesRole =
-        this.selectedRole === '' || user.roleId === this.selectedRole;
+        const matchesRole =
+          this.selectedRole ===
+            '' ||
+          user.roleId ===
+            this.selectedRole;
 
-      return matchesSearch && matchesStatus && matchesRole;
-    });
+        return (
+          matchesSearch &&
+          matchesStatus &&
+          matchesRole
+        );
+      },
+    );
   }
 
-  getUserInitials(fullName: string): string {
+  getUserInitials(
+    fullName: string,
+  ): string {
     if (!fullName.trim()) {
       return '?';
     }
@@ -210,11 +354,18 @@ export class UserManagement implements OnInit {
       .trim()
       .split(/\s+/)
       .slice(0, 2)
-      .map((name) => name.charAt(0).toUpperCase())
+      .map(
+        (name) =>
+          name
+            .charAt(0)
+            .toUpperCase(),
+      )
       .join('');
   }
 
-  getRoleClass(roleId: RolesEnum): string {
+  getRoleClass(
+    roleId: RolesEnum,
+  ): string {
     switch (roleId) {
       case RolesEnum.Administrator:
         return 'role-admin';
@@ -239,8 +390,12 @@ export class UserManagement implements OnInit {
     }
   }
 
-  getStatusClass(status: UserStatus): string {
-    return status === 'Active' ? 'status-active' : 'status-inactive';
+  getStatusClass(
+    status: UserStatus,
+  ): string {
+    return status === 'Active'
+      ? 'status-active'
+      : 'status-inactive';
   }
 
   clearFilters(): void {
@@ -250,85 +405,138 @@ export class UserManagement implements OnInit {
   }
 
   addUser(): void {
-    this.router.navigate(['/users/add']);
+    this.router.navigate([
+      '/users/add',
+    ]);
   }
 
-  viewUser(user: User): void {
-    this.router.navigate(['/users', user.id]);
+  viewUser(
+    user: User,
+  ): void {
+    this.router.navigate([
+      '/users',
+      user.id,
+    ]);
   }
 
-  editUser(user: User): void {
-    this.router.navigate(['/users', user.id, 'edit']);
+  editUser(
+    user: User,
+  ): void {
+    this.router.navigate([
+      '/users',
+      user.id,
+      'edit',
+    ]);
   }
 
-  deleteUser(user: User): void {
-    if (this.deletingUserId() === user.id) {
+  deleteUser(
+    user: User,
+  ): void {
+    if (
+      this.deletingUserId() ===
+      user.id
+    ) {
       return;
     }
 
-    const dialogData: ConfirmDeleteDialogData = {
-      title: 'Delete User',
-      message: `Are you sure you want to delete ${user.fullName}? This action cannot be undone.`,
-      cancelText: 'Cancel',
-      confirmText: 'Delete',
-    };
+    const dialogData:
+      ConfirmDeleteDialogData = {
+        title:
+          'Delete User',
 
-    const dialogRef = this.dialog.open<
-      ConfirmDeleteDialog,
-      ConfirmDeleteDialogData,
-      boolean
-    >(ConfirmDeleteDialog, {
-      width: '430px',
-      maxWidth: 'calc(100vw - 32px)',
-      disableClose: true,
-      autoFocus: false,
-      data: dialogData,
-    });
+        message:
+          `Are you sure you want to delete ${user.fullName}? This action cannot be undone.`,
 
-    dialogRef.afterClosed().subscribe((confirmed) => {
-      if (!confirmed) {
-        return;
-      }
+        cancelText:
+          'Cancel',
 
-      this.deletingUserId.set(user.id);
-      this.errorMessage.set('');
+        confirmText:
+          'Delete',
+      };
 
-      this.usersService.deleteUser(user.id).subscribe({
-        next: () => {
-          this.users.update((currentUsers) =>
-            currentUsers.filter((currentUser) => currentUser.id !== user.id),
+    const dialogRef =
+      this.dialog.open<
+        ConfirmDeleteDialog,
+        ConfirmDeleteDialogData,
+        boolean
+      >(
+        ConfirmDeleteDialog,
+        {
+          width:
+            '430px',
+
+          maxWidth:
+            'calc(100vw - 32px)',
+
+          disableClose:
+            true,
+
+          autoFocus:
+            false,
+
+          data:
+            dialogData,
+        },
+      );
+
+    dialogRef
+      .afterClosed()
+      .subscribe(
+        (confirmed) => {
+          if (!confirmed) {
+            return;
+          }
+
+          this.deletingUserId.set(
+            user.id,
           );
 
-          this.deletingUserId.set(null);
+          this.errorMessage.set(
+            '',
+          );
+
+          this.usersService
+            .deleteUser(
+              user.id,
+            )
+            .subscribe({
+              next: () => {
+                this.users.update(
+                  (
+                    currentUsers,
+                  ) =>
+                    currentUsers.filter(
+                      (
+                        currentUser,
+                      ) =>
+                        currentUser.id !==
+                        user.id,
+                    ),
+                );
+
+                this.deletingUserId.set(
+                  null,
+                );
+              },
+
+              error: (
+                error: ApiError,
+              ) => {
+                console.error(
+                  'Failed to delete user:',
+                  error,
+                );
+
+                this.deletingUserId.set(
+                  null,
+                );
+
+                this.errorMessage.set(
+                  error.message,
+                );
+              },
+            });
         },
-
-        error: (error) => {
-          console.error('Failed to delete user:', error);
-
-          this.deletingUserId.set(null);
-          this.setErrorMessage(error);
-        },
-      });
-    });
-  }
-
-  private setErrorMessage(error: { status?: number }): void {
-    if (error.status === 0) {
-      this.errorMessage.set(
-        'Cannot connect to the server. Check the API URL, network connection, and CORS configuration.',
       );
-    } else if (error.status === 401) {
-      this.errorMessage.set('Your session has expired. Please log in again.');
-    } else if (error.status === 403) {
-      this.errorMessage.set(
-        'You do not have permission to perform this operation.',
-      );
-    } else if (error.status === 404) {
-      this.errorMessage.set('The selected user was not found.');
-    } else {
-      this.errorMessage.set(
-        'The operation could not be completed. Please try again.',
-      );
-    }
   }
 }

@@ -1,41 +1,73 @@
 import { Routes } from '@angular/router';
 
+import { authGuard } from './core/auth.guard';
+
 export const routes: Routes = [
   {
+    path: 'login',
+    loadComponent: () =>
+      import(
+        './pages/login/login'
+      ).then(
+        (component) =>
+          component.Login,
+      ),
+  },
+
+  {
     path: '',
-    redirectTo: 'users',
-    pathMatch: 'full',
-  },
-  {
-    path: 'users',
+    canActivate: [authGuard],
     loadComponent: () =>
       import(
-        './pages/user-management/user-management'
+        './shell'
       ).then(
         (component) =>
-          component.UserManagement,
+          component.shell,
       ),
+    children: [
+      {
+        path: '',
+        redirectTo: 'users',
+        pathMatch: 'full',
+      },
+
+      {
+        path: 'users',
+        loadComponent: () =>
+          import(
+            './pages/user-management/user-management'
+          ).then(
+            (component) =>
+              component.UserManagement,
+          ),
+      },
+
+
+      {
+        path: 'users/add',
+        loadComponent: () =>
+          import(
+            './pages/user-form/user-form'
+          ).then(
+            (component) =>
+              component.UserForm,
+          ),
+      },
+
+   
+      {
+        path: 'users/:id/edit',
+        loadComponent: () =>
+          import(
+            './pages/user-form/user-form'
+          ).then(
+            (component) =>
+              component.UserForm,
+          ),
+      },
+    ],
   },
-  {
-    path: 'users/add',
-    loadComponent: () =>
-      import(
-        './pages/add-user/add-user'
-      ).then(
-        (component) =>
-          component.AddUser,
-      ),
-  },
-  {
-    path: 'users/:id/edit',
-    loadComponent: () =>
-      import(
-        './pages/edit-user/edit-user'
-      ).then(
-        (component) =>
-          component.EditUser,
-      ),
-  },
+
   {
     path: '**',
     redirectTo: 'users',

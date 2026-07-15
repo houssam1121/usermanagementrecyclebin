@@ -7,7 +7,7 @@
   box-sizing: border-box;
 }
 
-.add-user-page {
+.user-form-page {
   min-height: 100%;
   padding: 28px 16px 40px;
   background: #f8fafc;
@@ -20,7 +20,7 @@
   min-width: auto;
   margin: 0 0 20px;
   padding: 0;
-  color: #1A1A2E !important;
+  color: #1a1a2e !important;
   font-size: 15px;
   font-weight: 500;
 
@@ -28,13 +28,13 @@
     width: 20px;
     height: 20px;
     margin-right: 8px;
-    color: #1A1A2E;
+    color: #1a1a2e;
     font-size: 20px;
     line-height: 20px;
   }
 }
 
-/* Page title */
+/* Header */
 
 .page-header {
   margin-bottom: 30px;
@@ -57,10 +57,11 @@
 
 /* Main layout */
 
-.add-user-layout {
+.user-form-layout {
   display: grid;
   grid-template-columns:
-    minmax(0, 1fr) minmax(330px, 31%);
+    minmax(0, 1fr)
+    minmax(330px, 31%);
   gap: 30px;
   align-items: start;
 }
@@ -100,7 +101,7 @@
   }
 }
 
-/* Form fields grid */
+/* Form grid */
 
 .form-grid {
   display: grid;
@@ -115,7 +116,7 @@
   min-width: 0;
   flex-direction: column;
 
-  >label {
+  > label {
     margin-bottom: 10px;
     color: #08152e;
     font-size: 16px;
@@ -123,27 +124,13 @@
     line-height: 1.3;
 
     span {
-      color: #08152e;
+      color: #dc2626;
     }
   }
 
   mat-form-field {
     width: 100%;
-  }
-}
 
-.field-error {
-  display: block;
-  margin-top: 6px;
-  color: #dc2626;
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-/* Angular Material inputs */
-
-.field-container {
-  mat-form-field {
     --mdc-outlined-text-field-container-shape:
       12px;
 
@@ -195,7 +182,7 @@
   }
 
   ::ng-deep .mat-mdc-select-placeholder {
-    color: #242d43;
+    color: #68758a;
     opacity: 1;
   }
 
@@ -204,7 +191,15 @@
   }
 }
 
-/* Password visibility button */
+.field-error {
+  display: block;
+  margin-top: 6px;
+  color: #dc2626;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Password */
 
 .visibility-button {
   width: 38px;
@@ -220,7 +215,38 @@
   }
 }
 
-/* Permission card */
+.reset-password-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  strong {
+    display: block;
+    color: #08152e;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 6px 0 0;
+    color: #58708f;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}
+
+.reset-password-button {
+  min-width: 170px;
+  min-height: 44px;
+  border-radius: 12px;
+
+  mat-icon {
+    margin-right: 7px;
+  }
+}
+
+/* Permission */
 
 .permission-card {
   padding-bottom: 30px;
@@ -242,7 +268,6 @@
   border-radius: 12px;
   background: #ffffff;
   cursor: pointer;
-
   transition:
     border-color 150ms ease,
     background-color 150ms ease;
@@ -253,8 +278,8 @@
   }
 
   &:has(.mat-mdc-radio-checked) {
-    border-color: #b5c3d2;
-    background: #ffffff;
+    border-color: #2d4359;
+    background: #f7f9fb;
   }
 
   mat-radio-button {
@@ -283,7 +308,7 @@
   }
 }
 
-/* Role and status card */
+/* Role and status */
 
 .role-card {
   position: sticky;
@@ -315,8 +340,6 @@
   }
 }
 
-/* Slide toggle */
-
 ::ng-deep .role-card .mat-mdc-slide-toggle {
   --mdc-switch-selected-track-color:
     #2d4359;
@@ -347,28 +370,26 @@
   border-top-color: #e2e5e9;
 }
 
-/* Buttons */
+/* Actions */
 
 .form-actions {
   display: flex;
   flex-direction: column;
   gap: 10px;
-
+  margin-top: 22px;
 
   button {
     width: 100%;
-    height: 42px;
-    min-height: 42px;
+    height: 44px;
+    min-height: 44px;
     border-radius: 15px;
     font-size: 15px;
-
   }
 }
 
 .button-content {
   display: inline-flex;
   width: 100%;
-  align-content: center;
   align-items: center;
   justify-content: center;
   gap: 10px;
@@ -384,11 +405,11 @@
 }
 
 .button-content mat-spinner {
-  flex-shrink: 0;
   margin: 0;
+  flex-shrink: 0;
 }
 
-.create-button {
+.submit-button {
   background: #2d4359 !important;
   color: #ffffff !important;
 
@@ -415,15 +436,70 @@
   }
 }
 
+/* Error banner */
+
+.error-banner {
+  display: flex;
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  background: #fef2f2;
+  color: #b91c1c;
+
+  mat-icon {
+    flex-shrink: 0;
+    color: #dc2626;
+  }
+}
+
+/* Loading/error states */
+
+.state-container {
+  display: flex;
+  min-height: 320px;
+  padding: 30px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1px solid #e0e4e9;
+  border-radius: 14px;
+  background: #ffffff;
+  text-align: center;
+
+  p {
+    margin: 0;
+    color: #697386;
+  }
+}
+
+.error-state {
+  mat-icon {
+    width: 48px;
+    height: 48px;
+    color: #dc2626;
+    font-size: 48px;
+  }
+
+  strong {
+    font-size: 18px;
+  }
+}
+
+.primary-button {
+  margin-top: 6px;
+  background: #2d4359 !important;
+  color: #ffffff !important;
+}
+
 /* Tablet */
 
 @media (max-width: 1100px) {
-  .add-user-layout {
+  .user-form-layout {
     grid-template-columns: 1fr;
-  }
-
-  .side-column {
-    order: -1;
   }
 
   .role-card {
@@ -434,8 +510,8 @@
 /* Mobile */
 
 @media (max-width: 700px) {
-  .add-user-page {
-    padding: 20px 4px 30px;
+  .user-form-page {
+    padding: 20px 8px 30px;
   }
 
   .page-header {
@@ -450,7 +526,7 @@
     }
   }
 
-  .add-user-layout,
+  .user-form-layout,
   .main-column {
     gap: 18px;
   }
@@ -467,5 +543,14 @@
 
   .form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .reset-password-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .reset-password-button {
+    width: 100%;
   }
 }
