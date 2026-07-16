@@ -329,10 +329,7 @@ export class UserForm implements OnInit {
   private setupEditMode(): void {
     this.isEditMode.set(true);
 
-    /*
-     * Password is not edited using this form.
-     * Reset Password remains a separate action.
-     */
+
     this.passwordControl.clearValidators();
 
     this.confirmPasswordControl
@@ -419,11 +416,6 @@ export class UserForm implements OnInit {
               user.Mobile?.trim() ||
               '',
 
-            /*
-             * ApiUser currently has no BranchId.
-             * Replace this value when BranchId is
-             * added to your API model.
-             */
             branchId: 1,
 
             roleId:
@@ -785,7 +777,8 @@ export class UserForm implements OnInit {
       `user_${Date.now()}`;
   }
 
-  get fullNameControl() {
+
+  get fullNameControl() {             
     return this.userForm.controls
       .fullName;
   }
